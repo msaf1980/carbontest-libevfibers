@@ -15,8 +15,8 @@ struct strm {
 	int fd;
 	socktype type;
 
-	char *buf;
-	size_t buf_size;
+	char *obuf;
+	size_t obuf_size;
 
 	size_t opos;
 	size_t olength;
