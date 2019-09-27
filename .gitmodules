@@ -1,0 +1,6 @@
+[submodule "contrib/concurrentqueue"]
+	path = contrib/concurrentqueue
+	url = https://github.com/cameron314/concurrentqueue
+[submodule "contrib/plog"]
+	path = contrib/plog
+	url = https://github.com/SergiusTheBest/plog
