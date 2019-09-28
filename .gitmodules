@@ -4,3 +4,6 @@
 [submodule "contrib/plog"]
 	path = contrib/plog
 	url = https://github.com/SergiusTheBest/plog
+[submodule "contrib/c_procs"]
+	path = contrib/c_procs
+	url = https://github.com/msaf1980/c_procs

@@ -29,14 +29,6 @@ map<string, uint64_t> stat_count;
 std::atomic_bool running_queue; // running dequeue flag
 SpinningBarrier  queue_wait(2);
 
-int ignore_sigpipe() {
-	struct sigaction sa, osa;
-	sa.sa_handler = SIG_IGN;
-	sigemptyset(&sa.sa_mask);
-	sa.sa_flags = 0;
-	return sigaction(SIGPIPE, &sa, &osa);
-}
-
 void dequeueStat(const Config &config, std::fstream &file,
                  NetStatQueue &queue) {
 	NetStat stat;

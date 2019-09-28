@@ -14,5 +14,6 @@ mkdir contrib
 cd contrib && {
     git submodule add https://github.com/cameron314/concurrentqueue
     git submodule add https://github.com/SergiusTheBest/plog
+    git submodule add https://github.com/msaf1980/c_procs
     git submodule update --init
 }

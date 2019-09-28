@@ -85,11 +85,15 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 if ( DEFINED DIR_INCLUDES )
     # Includes in separate directory
-    include_directories( ${DIR_INCLUDES} ${fmt_INCLUDE_DIRS} contrib/concurrentqueue contrib/plog/include )
+    include_directories( ${DIR_INCLUDES} ${fmt_INCLUDE_DIRS} contrib/concurrentqueue contrib/plog/include contrib/c_procs/include contrib/cpp_procs/include )
 endif()
 
 #Scan dir for standart source files
 aux_source_directory( ${DIR_SOURCES} SOURCES )
+
+list(APPEND SOURCES
+    
+)
 
 #Add sources from dir
 #set( SOURCES
