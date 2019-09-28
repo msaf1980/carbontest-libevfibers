@@ -12,6 +12,7 @@
 
 #include <fmt/format.h>
 
+#include <c_procs/daemonutils.h>
 #include <threads/spinning_barrier.hpp>
 
 #include <clients.hpp>
@@ -95,7 +96,10 @@ int runClients(const Config &config) {
 
 	static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
 	plog::init(config.LogLevel, &consoleAppender);
-
+	if (ignore_sigpipe() == -1) {
+		LOG_FATAL << "Failed to ignore SIGPIPE, but failed: " << strerror(errno);
+        exit(1);
+    }
 	LOG_INFO << "Starting with " << config.Workers << " TCP clients and "
 	         << config.UWorkers << " UDP clients";
 	LOG_INFO << "Client thread count " << thread_count;
