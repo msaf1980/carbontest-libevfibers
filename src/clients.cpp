@@ -1,17 +1,21 @@
-#include <clients.hpp>
-
 #include <stdlib.h>
 
-int sock_init(struct strm *s, size_t sze, socktype type) {
-	if (sze > 0) {
-		if ((s->obuf = (char *) malloc(sze)) == NULL)
-			return -1;
-	} else {
-		s->obuf = NULL;
+#include <plog/Log.h>
+
+#include <ev.h>
+
+#include <clients.hpp>
+
+void clientThread(const int &thread_id, const int &thread_count, const Config &config, NetStatQueue &queue) {
+	LOG_VERBOSE << "Starting client thread " << thread_id;
+
+	//struct ev_loop * loop = ev_loop_new(0);
+	for (int i = thread_id; i < config.Workers; i += thread_count) {
+		LOG_VERBOSE << "Starting TCP client " << i << " in client thread " << thread_id;
 	}
-	s->type = type;
-	s->obuf_size = sze;
-	s->olength = 0;
-	s->opos = 0;
-	return 0;
+	for (int i = thread_id; i < config.UWorkers; i += thread_count) {
+		LOG_VERBOSE << "Starting UDP client " << i << " in client thread " << thread_id;
+	}
+
+	LOG_VERBOSE << "Shutdown client thread " << thread_id;
 }

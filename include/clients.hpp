@@ -1,31 +1,13 @@
 #ifndef _CLIENTS_HPP_
 #define _CLIENTS_HPP_
 
-#ifdef __cplusplus
-extern "C" {
-#endif
+#include <cstdlib>
 
-#include <string.h>
+#include <config.hpp>
+#include <netstat.hpp>
 
-#define BUF_SIZE 1024
+#define MAX_MESSAGE_LEN 1024
 
-enum socktype { TCP, UDP };
-
-struct strm {
-	int fd;
-	socktype type;
-
-	char *obuf;
-	size_t obuf_size;
-
-	size_t opos;
-	size_t olength;
-};
-
-int sock_init(struct strm *s, size_t sze, socktype type);
-
-#ifdef __cplusplus
-}
-#endif
+void clientThread(const int &thread_id, const int &thread_count, const Config &config, NetStatQueue &queue);
 
 #endif /* _CLIENTS_HPP_ */

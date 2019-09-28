@@ -4,10 +4,8 @@
 #include <fstream>
 #include <iostream>
 #include <map>
-#include <vector>
 #include <thread>
-
-#include <ev.h>
+#include <vector>
 
 #include <plog/Appenders/ConsoleAppender.h>
 #include <plog/Log.h>
@@ -16,16 +14,16 @@
 
 #include <spinning_barrier.hpp>
 
+#include <clients.hpp>
 #include <netstat.hpp>
 #include <runner.hpp>
 
-
 using std::map;
 using std::string;
-using std::vector;
 using std::thread;
+using std::vector;
 
-chrono_clock start, end;
+chrono_clock          start, end;
 map<string, uint64_t> stat_count;
 
 std::atomic_bool running_queue; // running dequeue flag
@@ -92,89 +90,67 @@ void dequeueThread(const Config &config, NetStatQueue &queue) {
 	LOG_VERBOSE << "Shutdown dequeue thread";
 }
 
+struct Thread {
+	thread *t;
+	int     id;
+};
+
 int runClients(const Config &config) {
 	int thread_count = config.Threads - 1;
+
+	vector<struct Thread> threads; /* client thread */
+	threads.resize(thread_count);
 
 	static plog::ConsoleAppender<plog::TxtFormatter> consoleAppender;
 	plog::init(config.LogLevel, &consoleAppender);
 
 	LOG_INFO << "Starting with " << config.Workers << " TCP clients and "
 	         << config.UWorkers << " UDP clients";
-	LOG_INFO << "Thread count " << thread_count;
+	LOG_INFO << "Client thread count " << thread_count;
 
 	NetStatQueue queue;
-
-	/* clients in thread */
-	vector<size_t> workers_count;
-	size_t workers_per_th;
-	vector<size_t> uworkers_count;
-	size_t uworkers_per_th;
-
-	if (config.Workers > 0) {
-		// clientsTCP.resize(config.Workers);
-		workers_per_th = config.Workers / thread_count;
-		workers_count.resize(thread_count);
-		std::fill(workers_count.begin(), workers_count.end(), workers_per_th);
-	}
-	if (config.UWorkers > 0) {
-		// clientsUDP.resize(config.UWorkers);
-	}
 
 	running_queue.store(true);
 	running.store(true);
 
-	thread *thread_q = new thread(dequeueThread, std::ref(config), std::ref(queue));
+	thread *thread_q =
+	    new thread(dequeueThread, std::ref(config), std::ref(queue));
 	queue_wait.wait();
 	if (!running.load())
 		return 1;
 
-	// vector<boost::asio::io_context> io_contexts(thread_count);
-
-	//int t = 0;
-	//for (int i = 0; i < config.Workers; i++) {
-		//if (t == thread_count)
-			//t = 0;
-	//}
-	//for (int i = 0; i < config.UWorkers; i++) {
-		//if (t == thread_count)
-			//t = 0;
-	//}
+	for (int i = 0; i < thread_count; i++) {
+		threads[i].id = i;
+		threads[i].t = new thread(clientThread, std::ref(threads[i].id),
+		                          std::ref(thread_count), std::ref(config),
+		                          std::ref(queue));
+	}
 
 	start = TIME_NOW;
 	std::this_thread::sleep_for(std::chrono::milliseconds(config.Timeout));
 
+	LOG_INFO << "Shutting down";
 	running.store(false);
+
+	for (int i = 0; i < thread_count; i++) {
+		threads[i].t->join();
+		delete threads[i].t;
+	}
 	end = TIME_NOW;
 
-	LOG_INFO << "Shutting down";
-
-//	for (int i = 0; i < config.Workers; i++) {
-//		clientsTCP[i]->stop();
-//	}
-//	for (int i = 0; i < config.UWorkers; i++) {
-//		clientsUDP[i]->stop();
-//	}
-
-	// boost::this_thread::sleep_for(boost::chrono::milliseconds(config.Timeout));
-
-	// for (int i = 0; i < thread_count; ++i) {
-	// io_contexts[i].stop();
-	//}
-
-//	threads_ioc.join_all();
 	running_queue.store(false);
 	thread_q->join();
 	delete thread_q;
 
 	using float_seconds = std::chrono::duration<double>;
 	auto duration =
-		std::chrono::duration_cast<float_seconds>(end - start).count();
+	    std::chrono::duration_cast<float_seconds>(end - start).count();
 	if (duration > 0) {
 		std::cout << std::fixed;
 		std::cout << "Test duration " << duration << " s" << std::endl;
 		for (auto &it : stat_count) {
 			std::cout << it.first << ": " << it.second << " ("
-					  << it.second / duration << " op/s)" << std::endl;
+			          << it.second / duration << " op/s)" << std::endl;
 		}
 	}
 

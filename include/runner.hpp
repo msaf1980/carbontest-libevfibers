@@ -1,7 +1,6 @@
 #ifndef _RUNNER_HPP_
 #define _RUNNER_HPP_
 
-#include <client.hpp>
 #include <config.hpp>
 
 int runClients(const Config &config);
