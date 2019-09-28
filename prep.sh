@@ -10,10 +10,12 @@ cd .. && rm -rf conan-cxxopts
 #cd conan-plog && conan create . local/stable || exit 1
 #cd .. && rm -rf conan-plog
 
-mkdir contrib
-cd contrib && {
-    git submodule add https://github.com/cameron314/concurrentqueue
-    git submodule add https://github.com/SergiusTheBest/plog
-    git submodule add https://github.com/msaf1980/c_procs
-    git submodule update --init
-}
+#cd contrib && {
+#  git submodule add https://github.com/cameron314/concurrentqueue
+#  git submodule add https://github.com/SergiusTheBest/plog
+#  git submodule add https://github.com/msaf1980/c_procs
+#  git submodule add https://github.com/msaf1980/cpp_procs
+#}
+
+git submodule update --init
+

@@ -7,3 +7,6 @@
 [submodule "contrib/c_procs"]
 	path = contrib/c_procs
 	url = https://github.com/msaf1980/c_procs
+[submodule "contrib/cpp_procs"]
+	path = contrib/cpp_procs
+	url = https://github.com/msaf1980/cpp_procs

@@ -92,7 +92,9 @@ endif()
 aux_source_directory( ${DIR_SOURCES} SOURCES )
 
 list(APPEND SOURCES
-    
+	contrib/c_procs/src/daemonutils.c
+	contrib/c_procs/src/fileutils.c
+	contrib/cpp_procs/src/threads/spinning_barrier.cpp
 )
 
 #Add sources from dir

@@ -12,7 +12,7 @@
 
 #include <fmt/format.h>
 
-#include <spinning_barrier.hpp>
+#include <threads/spinning_barrier.hpp>
 
 #include <clients.hpp>
 #include <netstat.hpp>
