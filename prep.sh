@@ -7,10 +7,11 @@ cd conan-cxxopts && conan create . local/stable
 cd .. && rm -rf conan-cxxopts
 
 git clone https://github.com/msaf1980/conan-libevfibers
-cd conan-libevfibers
-git checkout 0.4.1-57-g8f0a419
-conan create . local/stable
+cd conan-libevfibers && {
+git checkout 0.4.1-59-gc2996d9 && RES=0 || RES=1
+[ "${RES}" == "0" ] && conan create . local/stable
 cd .. && rm -rf conan-libevfibers
+}
 
 #git clone https://github.com/msaf1980/conan-plog || exit 1
 #cd conan-plog && conan create . local/stable || exit 1
