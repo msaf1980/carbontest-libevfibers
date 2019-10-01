@@ -13,6 +13,7 @@ build
 
 ### Vim
 .*.swp
+.*.swo
 ### VS Code
 .vscode
 ########################
